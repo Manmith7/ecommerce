@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/user.js';
 
-const router = express.Router();
+  const router = express.Router();
 
   // Sign up route
   router.post('/signup', async (req, res) => {
@@ -40,7 +40,7 @@ const router = express.Router();
   });
 
 // Login route
-router.get('/login', async (req, res) => {
+router.post('/login', async (req, res) => {
   try {
     console.log("Hello from the login");
       const { email, password } = req.body;
