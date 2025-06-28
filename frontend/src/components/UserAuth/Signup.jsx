@@ -42,9 +42,12 @@ const Signup = ({ setActiveCategory }) => {
 
     try {
       const response = await axios.post("https://ecommerce-o1mq.onrender.com/api/auth/signup", {
-        emailOrMobile,
-        password,
-      });
+          email: emailOrMobile,             // ✅ Map to expected backend field
+          password,
+          confirmPassword,                  // ✅ Add this field
+          role: "customer"
+        });
+
 
       if (response.status === 201) {
         setSignupSuccess(true);
