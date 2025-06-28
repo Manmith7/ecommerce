@@ -7,6 +7,8 @@ const router = express.Router();
 
   // Sign up route
   router.post('/signup', async (req, res) => {
+    console.log("Hello from the signup");
+    
     const { email, password, confirmPassword, role } = req.body;
 
     if (password !== confirmPassword) {
@@ -40,6 +42,7 @@ const router = express.Router();
 // Login route
 router.get('/login', async (req, res) => {
   try {
+    console.log("Hello from the login");
       const { email, password } = req.body;
 
       const emailPattern = /^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/;
