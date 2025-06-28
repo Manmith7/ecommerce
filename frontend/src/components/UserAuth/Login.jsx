@@ -14,7 +14,7 @@ function Login({ setIsLoggedIn, setUserName, setActiveCategory }) {
       const response = await fetch("https://ecommerce-o1mq.onrender.com/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ emailOrMobile, password }),
+        body: JSON.stringify({ email:emailOrMobile, password }),
       });
 
       if (!response.ok) {
