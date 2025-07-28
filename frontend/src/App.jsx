@@ -12,7 +12,7 @@ import Login from "./components/UserAuth/Login.jsx";
 import Signup from "./components/UserAuth/Signup.jsx";
 import Account from "./components/Account/Account.jsx";
 import Wishlist from "./components/Cart/wish.jsx";
-import ShopLayout from "./components/Shop/ShopLayout.jsx";
+import ShopLayout from "./components/Shop/Products.jsx";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
