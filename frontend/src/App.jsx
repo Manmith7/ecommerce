@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar.jsx";
 import MensWearPage from "./components/Shop/Products.jsx";
 import Hero from "./components/HeroSection/Hero.jsx";
@@ -7,88 +8,84 @@ import About from "./components/About/about.jsx";
 import Contact from "./components/Contact/contact.jsx";
 import Cart from "./components/Cart/cart.jsx";
 import Orders from "./components/Cart/orders.jsx";
-import CartProvider from "./components/Cart/CartContext.jsx";
-import OrderProvider from "./components/Cart/OrderContext.jsx";
 import Login from "./components/UserAuth/Login.jsx";
 import Signup from "./components/UserAuth/Signup.jsx";
 import Account from "./components/Account/Account.jsx";
-import Wishlist from "./components/Cart/wish.jsx"; 
-import { WishlistProvider } from "./components/Cart/wishlistContext.jsx"; 
+import Wishlist from "./components/Cart/wish.jsx";
+import ShopLayout from "./components/Shop/ShopLayout.jsx";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
-  const [activeCategory, setActiveCategory] = useState("home");
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
-  const [userEmailOrMobile, setUserEmailOrMobile] = useState(""); // Track logged-in user
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userEmailOrMobile, setUserEmailOrMobile] = useState("");
 
-  const handleCategorySelect = (category) => {
-    setActiveCategory(category);
+  const ProtectedRoute = ({ children }) => {
+    return isLoggedIn ? children : <Navigate to="/login" />;
   };
-
-  const renderContent = () => {
-    switch (activeCategory) {
-      case "collections":
-        return <Collections />;
-      case "about":
-        return <About />;
-      case "contact":
-        return <Contact />;
-      case "mens":
-      case "womens":
-      case "newArrivals":
-        return <MensWearPage category={activeCategory} />;
-      case "orders":
-        return isLoggedIn ? <Orders /> : <LoginRedirect />;
-      case "cart":
-        return isLoggedIn ? <Cart emailOrMobile={userEmailOrMobile} /> : <LoginRedirect />;
-      case "wishlist": // Added Wishlist case
-        return isLoggedIn ? <Wishlist /> : <LoginRedirect />;
-      case "Login":
-        return (
-          <Login
-            setIsLoggedIn={setIsLoggedIn}
-            setUserName={setUserEmailOrMobile}
-            setActiveCategory={setActiveCategory}
-          />
-        );
-      case "account":
-        return <Account />;
-      case "Signup":
-        return <Signup setActiveCategory={setActiveCategory} />;
-      case "home":
-      default:
-        return <Hero />;
-    }
-  };
-
-  const LoginRedirect = () => (
-    <div className="text-center mt-5">
-      <h4>You must be logged in to access this page.</h4>
-      <button
-        className="btn btn-primary mt-3"
-        onClick={() => setActiveCategory("Login")}
-      >
-        Login
-      </button>
-    </div>
-  );
 
   return (
-    <WishlistProvider> {/* Wrap the app with WishlistProvider */}
-      <OrderProvider>
-        <CartProvider>
-          <div className="App">
-            <Navbar
-              setActiveCategory={handleCategorySelect}
-              isLoggedIn={isLoggedIn}
+    <Router>
+      <Navbar
+        isLoggedIn={isLoggedIn}
+        setIsLoggedIn={setIsLoggedIn}
+        userName={userEmailOrMobile}
+      />
+      <Routes>
+        <Route path="/" element={<Hero />} />
+        <Route path="/collections" element={<Collections />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+
+        {/* 🛒 Nested Shopping Routes under ShopLayout */}
+        <Route path="/shop" element={<ShopLayout />}>
+          <Route path="mens" element={<MensWearPage category="mens" />} />
+          <Route path="womens" element={<MensWearPage category="womens" />} />
+          <Route path="newArrivals" element={<MensWearPage category="newArrivals" />} />
+        </Route>
+
+        {/* 🔒 Protected Routes */}
+        <Route
+          path="/cart"
+          element={
+            <ProtectedRoute>
+              <Cart emailOrMobile={userEmailOrMobile} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute>
+              <Orders />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/wishlist"
+          element={
+            <ProtectedRoute>
+              <Wishlist />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* 🔐 Auth */}
+        <Route
+          path="/login"
+          element={
+            <Login
               setIsLoggedIn={setIsLoggedIn}
-              userName={userEmailOrMobile}
+              setUserName={setUserEmailOrMobile}
             />
-            {renderContent()}
-          </div>
-        </CartProvider>
-      </OrderProvider>
-    </WishlistProvider> 
+          }
+        />
+        <Route path="/signup" element={<Signup setActiveCategory={() => {}} />} />
+        <Route path="/account" element={<Account />} />
+
+        {/* 🌐 Catch-all */}
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </Router>
   );
 }
 
